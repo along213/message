@@ -5,14 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RecordPersonMsg {
+public class SmallTalkRecord {
 
-    private String id;
+    private String recipientId;
 
-    private Integer readId;
+    private Date timestamp;
 
 }

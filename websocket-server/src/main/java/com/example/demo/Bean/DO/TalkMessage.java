@@ -4,21 +4,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "SmallTalk_Msg")
-public class SmallTalkMessageDO implements Serializable {
+public class TalkMessage implements Serializable {
 
-    private String codeId;
+    private String originatorId;
 
-    private List<TalkMessage> message;
+    private String recipientId;
+
+    private String message;
+
+    private Date timestamp;
+
+    private String type;
+
+
 
 }

@@ -14,7 +14,7 @@ public class OnWaySendCache {
      */
     private static Map<String, ConcurrentHashMap<Session,WebSocket>> clientsConn = new ConcurrentHashMap<>();
 
-    private static ConcurrentHashMap<String,Integer> readNum = new ConcurrentHashMap<>();
+    //private static ConcurrentHashMap<String,Integer> readNum = new ConcurrentHashMap<>();
     /**
      * 添加连接
      * @param codeId 唯一标识
@@ -48,22 +48,22 @@ public class OnWaySendCache {
         clientsConn.get(codeId).remove(session);
     }
 
-    /**
-     * 添加
-     * @param codeId 唯一标识
-     * @param readId 读取的id
-     */
-    public static void putReadId(String codeId,Integer readId){
-        readNum.put(codeId,readId);
-    }
-
-    public static Integer getReadId(String codeId){
-        return readNum.get(codeId);
-    }
-
-    public static void putReadId(String codeId){
-        Integer num = readNum.get(codeId);
-        readNum.put(codeId,--num);
-    }
+//    /**
+//     * 添加
+//     * @param codeId 唯一标识
+//     * @param readId 读取的id
+//     */
+//    public static void putReadId(String codeId,Integer readId){
+//        readNum.put(codeId,readId);
+//    }
+//
+//    public static Integer getReadId(String codeId){
+//        return readNum.get(codeId);
+//    }
+//
+//    public static void putReadId(String codeId){
+//        Integer num = readNum.get(codeId);
+//        readNum.put(codeId,--num);
+//    }
 
 }

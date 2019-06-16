@@ -43,8 +43,4 @@ public class SocketController {
         System.out.println(message.toString());
     }
 
-    public static void main(String[] args) {
-        System.out.println("1231223123德".hashCode());
-        System.out.println("1231233333".hashCode()+"&&"+"1231223123德".hashCode());
-    }
 }

@@ -23,11 +23,7 @@ public class SmallTalkRecordDO implements Serializable {
      */
     private String originatorId;
 
-    /**
-     *时间
-     */
-    private Date timestamp;
+    private Date createTime;
 
-
-    private List<RecordPersonMsg> recipientIds;
+    private List<SmallTalkRecord> recipientIds;
 }
