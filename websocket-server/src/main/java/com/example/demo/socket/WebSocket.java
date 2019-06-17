@@ -23,7 +23,6 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
@@ -224,7 +223,11 @@ public class WebSocket {
         String codeId = NumUtil.countCode(clientReqParam.getRecipientId().hashCode(), originatorId.hashCode());
         //记录存在
         if (contact.containsKey(clientReqParam.getRecipientId()))
-            editChatRecords(clientReqParam,"0");
+        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId)),
+                new Update().addToSet("message",new TalkMessage(clientReqParam.getOriginatorId(),
+                        clientReqParam.getRecipientId(),
+                        clientReqParam.getMessage(),
+                        new Date(),"0")),SmallTalkMessageDO.class);
          else {
             //不存在
             List<TalkMessage> messageArrayList = new ArrayList<>();
@@ -239,14 +242,11 @@ public class WebSocket {
     /**
      * 修改消息状态
      */
-    private void editChatRecords(ClientReqParam clientReqParam,String type){
+    private void editChatRecords(ClientReqParam clientReqParam){
         //todo
         String codeId = NumUtil.countCode(clientReqParam.getRecipientId().hashCode(), originatorId.hashCode());
-        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId)),
-                new Update().addToSet("message",new TalkMessage(clientReqParam.getOriginatorId(),
-                        clientReqParam.getRecipientId(),
-                        clientReqParam.getMessage(),
-                        new Date(),type)),SmallTalkMessageDO.class);
+        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId)),new Update().set("message.$.type","1")
+                ,SmallTalkMessageDO.class);
     }
 
     //批量发送
@@ -274,9 +274,10 @@ public class WebSocket {
         if (null == webSocket) return;
         try {
             webSocket.session.getBasicRemote().sendText(message);
-            editChatRecords(clientReqParam,"1");
+            editChatRecords(clientReqParam);
         }catch (Exception e){
             log.error(e.getMessage());
+            e.printStackTrace();
             SmallTalkClients.removeClients(clientReqParam.getRecipientId());
         }
     }
