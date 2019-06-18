@@ -21,4 +21,6 @@ public class SmallTalkMessageDO implements Serializable {
 
     private List<TalkMessage> message;
 
+
+
 }

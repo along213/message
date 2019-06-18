@@ -7,11 +7,9 @@ import com.example.demo.Bean.DO.SmallTalkRecord;
 import com.example.demo.Bean.DO.SmallTalkRecordDO;
 import com.example.demo.Bean.DO.TalkMessage;
 import com.example.demo.Bean.RequestParameter;
-import com.example.demo.cache.OnWaySendCache;
 import com.example.demo.cache.SmallTalkClients;
 import com.example.demo.util.NumUtil;
 import com.example.demo.util.TempUtils;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -82,7 +80,7 @@ public class WebSocket {
             //TODO 给自己发一条消息：告诉自己现在都有谁在线
             send2();
             //TODO 发送未读消息
-            send3();
+            send3(recordDO);
         }
         catch (IOException e){
             log.info(originatorId+"上线的时候通知所有人发生了错误");
@@ -113,24 +111,22 @@ public class WebSocket {
     }
 
     //未读消息
-    private void send3(){
+    private void send3(SmallTalkRecordDO recordDO){
 
         List<ClientReqParam> clientReqParamList = new ArrayList<>();
-
         //获取所有联系人id
-        for(String key : contact.keySet()){
-
-            //todo 结果可能不对
-            //查询单个联系人的未发送聊天记录
+        for(SmallTalkRecord smallTalkRecord : recordDO.getRecipientIds()){
+            //todo 结果可能不对  时间判断一读未读
+            //查询单个联系人超过最后一次聊天时间的聊天记录
             SmallTalkMessageDO messageDO = TempUtils.getTemple().findOne(
-                    Query.query(Criteria.where("codeId").is(NumUtil.countCode(key.hashCode(),originatorId.hashCode()))
-                    .and("message.$.type").is("1"))
+                    Query.query(Criteria.where("codeId").is(NumUtil.countCode(smallTalkRecord.getRecipientId().hashCode(),originatorId.hashCode()))
+                            .and("message.$.timestamp").gt(smallTalkRecord.getTimestamp()))
                     ,SmallTalkMessageDO.class);
             //判空
             if(messageDO!=null){
                 List<TalkMessage> message = messageDO.getMessage();
 
-                message.forEach(bean->{
+                message.stream().filter(bean->bean.getTimestamp().getTime() > smallTalkRecord.getTimestamp().getTime()).forEach(bean->{
                     ClientReqParam clientReqParam = new ClientReqParam();
                     clientReqParam.setMessageType(4);
                     clientReqParam.setOriginatorId(bean.getRecipientId());
@@ -155,15 +151,11 @@ public class WebSocket {
     @OnClose
     public void onClose()
     {
+        //删除在线人数
         SmallTalkClients.delNum();
-        SmallTalkClients.removeClients(originatorId);
         try {
-            //messageType 1代表上线 2代表下线 3代表在线名单  4代表普通消息
-            ClientReqParam clientReqParam = new ClientReqParam();
-            clientReqParam.setOriginatorId(originatorId);
-            clientReqParam.setOnlineUsers(contact.keySet());
-            clientReqParam.setMessageType(2);
-
+            //删除链接
+            SmallTalkClients.removeClients(originatorId);
         }
         catch (Exception e){
             log.info(originatorId+"下线的时候通知所有人发生了错误");
@@ -211,8 +203,28 @@ public class WebSocket {
                 SmallTalkRecordDO.class);
         else
             TempUtils.getTemple().upsert(Query.query(Criteria.where("originatorId").is(originatorId)),
-                new Update().addToSet("recipientIds",new SmallTalkRecord(clientReqParam.getRecipientId(),new Date())),
+                new Update().addToSet("recipientIds",new SmallTalkRecord(0,clientReqParam.getRecipientId(),new Date())),
                 SmallTalkRecordDO.class);
+    }
+
+    /**
+     * 设置已读行数
+     * @param smallTalkRecordDO
+     */
+    private void seReadline(SmallTalkRecordDO smallTalkRecordDO){
+        if (null==smallTalkRecordDO||null==smallTalkRecordDO.getRecipientIds()) return ;
+        //获取每个联系人的聊天行数 更新数据库
+        smallTalkRecordDO.getRecipientIds().forEach(bean->{
+            String codeId = NumUtil.countCode(bean.getRecipientId().hashCode(), originatorId.hashCode());
+            //聊天记录
+            SmallTalkMessageDO smallTalkMessage = TempUtils.getTemple().findOne(Query.query(Criteria.where("codeId").is(codeId)), SmallTalkMessageDO.class);
+            //如果存在 更新行数
+            if (null!=smallTalkMessage){
+                TempUtils.getTemple().upsert(Query.query(Criteria.where("originatorId").is(originatorId).and("recipientIds.recipientId").is(bean.getRecipientId())),
+                        new Update().set("recipientIds.$.timestamp",new Date()).set("recipientIds.$.readLine",smallTalkMessage.getMessage().size()),
+                        SmallTalkRecordDO.class);
+            }
+        });
     }
 
     /**
@@ -227,14 +239,14 @@ public class WebSocket {
                 new Update().addToSet("message",new TalkMessage(clientReqParam.getOriginatorId(),
                         clientReqParam.getRecipientId(),
                         clientReqParam.getMessage(),
-                        new Date(),"0")),SmallTalkMessageDO.class);
+                        new Date())),SmallTalkMessageDO.class);
          else {
             //不存在
             List<TalkMessage> messageArrayList = new ArrayList<>();
             messageArrayList.add(new TalkMessage(clientReqParam.getOriginatorId(),
                     clientReqParam.getRecipientId(),
                     clientReqParam.getMessage(),
-                    new Date(),"0"));
+                    new Date()));
             TempUtils.getTemple().save(new SmallTalkMessageDO(codeId,messageArrayList));
         }
     }
@@ -245,7 +257,7 @@ public class WebSocket {
     private void editChatRecords(ClientReqParam clientReqParam){
         //todo
         String codeId = NumUtil.countCode(clientReqParam.getRecipientId().hashCode(), originatorId.hashCode());
-        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId)),new Update().set("message.$.type","1")
+        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId).and("message.type").is("0")),new Update().set("message.1.type","1")
                 ,SmallTalkMessageDO.class);
     }
 
@@ -274,7 +286,6 @@ public class WebSocket {
         if (null == webSocket) return;
         try {
             webSocket.session.getBasicRemote().sendText(message);
-            editChatRecords(clientReqParam);
         }catch (Exception e){
             log.error(e.getMessage());
             e.printStackTrace();

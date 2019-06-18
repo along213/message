@@ -20,10 +20,9 @@ public class TalkMessage implements Serializable {
 
     private String message;
 
+    /**
+     * 发送时间
+     */
     private Date timestamp;
-
-    private String type;
-
-
 
 }

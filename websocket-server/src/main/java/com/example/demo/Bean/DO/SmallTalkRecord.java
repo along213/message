@@ -13,6 +13,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class SmallTalkRecord {
 
+    private Integer readLine;
+
     private String recipientId;
 
     private Date timestamp;
