@@ -4,39 +4,41 @@ import com.example.demo.socket.WebSocket;
 
 import javax.websocket.Session;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OnWaySendCache {
 
     /**
      * 单向发送
      */
-    private static Map<String, ConcurrentHashMap<Session,WebSocket>> clientsConn = new ConcurrentHashMap<>();
+    private static Map<String, CopyOnWriteArrayList<Session>> clientsConn = new ConcurrentHashMap<>();
 
     //private static ConcurrentHashMap<String,Integer> readNum = new ConcurrentHashMap<>();
     /**
      * 添加连接
      * @param codeId 唯一标识
-     * @param webSocket socket
+     * @param session session
      */
-    public synchronized static void addClientsConn(String codeId,WebSocket webSocket){
-        ConcurrentHashMap<Session,WebSocket> webSocketMaps = clientsConn.get(codeId);
-        if (null==webSocketMaps){
-            ConcurrentHashMap<Session,WebSocket> map = new ConcurrentHashMap<>();
-            map.put(webSocket.getSession(),webSocket);
-            clientsConn.put(codeId,map);
+    public synchronized static void addClientsConn(String codeId,Session session){
+        CopyOnWriteArrayList<Session> sessionList = clientsConn.get(codeId);
+        if (null==sessionList){
+            CopyOnWriteArrayList<Session> list = new CopyOnWriteArrayList<>();
+            list.add(session);
+            clientsConn.put(codeId,list);
             return;
         }
-        clientsConn.get(codeId).put(webSocket.getSession(),webSocket);
+        clientsConn.get(codeId).add(session);
     }
 
     /**
      * 获取连接
      * @param codeId 唯一标识
      */
-    public static Collection<WebSocket> getClientsConn(String codeId){
-        return clientsConn.get(codeId).values();
+    public static List<Session> getClientsConn(String codeId){
+        return clientsConn.get(codeId);
     }
 
     /**

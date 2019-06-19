@@ -1,6 +1,6 @@
 spring:
   data:
    mongodb:
-    uri: mongodb://192.168.10.200:27017/socket
+    uri: mongodb://127.0.0.1:27017/socket
 websocket:
-  url: http://192.168.10.33:8080
+  url: http://192.168.9.1:8080

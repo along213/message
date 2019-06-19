@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.Bean.RequestParameter;
 import com.example.demo.service.SendService;
+import com.example.demo.socket.OnWaySendSocket;
 import com.example.demo.socket.WebSocket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,8 +39,7 @@ public class SocketController {
     @ResponseBody
     @PostMapping("/websocket")
     public void webSocket(@RequestBody RequestParameter message){
-        String codeId = message.getCodeId();
-        WebSocket.sendMessage(message);
+        OnWaySendSocket.sendMessage(message);
         System.out.println(message.toString());
     }
 
