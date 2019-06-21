@@ -1,22 +1,15 @@
 package com.example.demo.socket;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.Bean.RequestParameter;
 import com.example.demo.cache.OnWaySendCache;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.websocket.server.ServerEndpoint;
 
 //只需要将路由和服务端发送的绑定 然后session绑定
 @Slf4j
