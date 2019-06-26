@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Bean.RequestParameter;
+import com.example.demo.service.FindChatService;
 import com.example.demo.service.SendService;
 import com.example.demo.socket.OnWaySendSocket;
 import com.example.demo.socket.WebSocket;
@@ -20,6 +21,9 @@ public class SocketController {
     private MongoTemplate mongoTemplate;
 
     @Resource
+    private FindChatService findChatService;
+
+    //@Resource
     private SendService sendService;
 
     @GetMapping("/websocket/{id}/{name}")
@@ -42,5 +46,12 @@ public class SocketController {
         OnWaySendSocket.sendMessage(message);
         System.out.println(message.toString());
     }
+
+    @ResponseBody
+    @PostMapping("/websocket11")
+    public void webSocket(@RequestBody String message){
+        findChatService.findChat(message);
+    }
+
 
 }

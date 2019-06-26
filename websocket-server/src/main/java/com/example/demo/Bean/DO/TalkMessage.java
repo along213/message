@@ -14,6 +14,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class TalkMessage implements Serializable {
 
+    private String id;
+
     private String originatorId;
 
     private String recipientId;
@@ -23,6 +25,6 @@ public class TalkMessage implements Serializable {
     /**
      * 发送时间
      */
-    private Date timestamp;
+    private Long timestamp;
 
 }

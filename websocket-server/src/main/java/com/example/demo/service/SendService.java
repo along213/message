@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public interface SendService extends SocketService{
 
     public void send(String key,Object object);

@@ -1,6 +1,21 @@
 spring:
   data:
-   mongodb:
-    uri: mongodb://127.0.0.1:27017/socket
+    mongodb:
+      uri: mongodb://dbadmin:qj123456789@192.168.10.200:27017/socket
+
+    elasticsearch:
+      cluster-nodes: ${ip}:9300
+      cluster-name: elasticsearch
+
+
+  jpa:
+    properties:
+      hibernate: enable_lazy_load_no_trans=true
+    show-sql: true
+
+ip: 192.168.10.200
+
+
+
 websocket:
-  url: http://192.168.9.1:8080
+  url: http://192.168.10.33:8080

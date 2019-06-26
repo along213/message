@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.lang.reflect.Proxy;
 
-@Configuration
+//@Configuration
 public class Config implements BeanClassLoaderAware {
 
     private ClassLoader classLoader;
@@ -16,7 +16,7 @@ public class Config implements BeanClassLoaderAware {
     @Value("${websocket.url}")
     private String url;
 
-    @Bean
+    //@Bean
     public SendService sendService(){
         Address address = new Address(url);
         return (SendService) Proxy.newProxyInstance(classLoader,new Class[]{SendService.class},new SocketHandler(address));

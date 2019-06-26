@@ -17,6 +17,6 @@ public class SmallTalkRecord {
 
     private String recipientId;
 
-    private Date timestamp;
+    private Long timestamp;
 
 }

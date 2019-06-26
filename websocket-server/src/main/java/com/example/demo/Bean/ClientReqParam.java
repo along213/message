@@ -24,5 +24,5 @@ public class ClientReqParam {
 
     private Set<String> onlineUsers;
 
-    private Date sendTime;
+    private String sendTime;
 }
