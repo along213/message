@@ -2,10 +2,14 @@ package com.example.demo.socket;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.Bean.ClientReqParam;
+import com.example.demo.Bean.ContactDto;
 import com.example.demo.Bean.DO.*;
+import com.example.demo.Bean.SmallTalkMessageDto;
 import com.example.demo.Repository.ChatRepository;
 import com.example.demo.cache.SmallTalkClients;
+import com.example.demo.common.WebApplicationContext;
 import com.example.demo.dfa.SensitiveWordFilter;
+import com.example.demo.service.ServiceFacade;
 import com.example.demo.util.EsUtil;
 import com.example.demo.util.NumUtil;
 import com.example.demo.util.TempUtils;
@@ -61,7 +65,7 @@ public class WebSocket {
 
         SmallTalkClients.addNum();
         //查询联系记录
-        SmallTalkRecordDO recordDO = querySmallTalkRecord(originatorId);
+        SmallTalkRecordDO recordDO = ServiceFacade.querySmallTalkRecord(originatorId);
 
         log.info("现在来连接的客户id："+session.getId()+"用户名："+originatorId);
         log.info("有新连接加入！ 当前在线人数" + SmallTalkClients.getOnlineNumber());
@@ -90,12 +94,6 @@ public class WebSocket {
         catch (IOException e){
             log.info(originatorId+"上线的时候通知所有人发生了错误");
         }
-    }
-
-    //查询联系记录
-    private SmallTalkRecordDO querySmallTalkRecord(String originatorId){
-        return TempUtils.getTemple().
-                findOne(Query.query(Criteria.where("originatorId").is(originatorId)), SmallTalkRecordDO.class);
     }
 
     //在线通知
@@ -233,108 +231,15 @@ public class WebSocket {
      * 保存联系列表及最新联系时间
      */
     private void saveRelationshipRecord(ClientReqParam clientReqParam){
-
-        saveRelationshipRecord(clientReqParam.getOriginatorId(),clientReqParam.getRecipientId());
-        //判断联系列表中是否存在该联系人
-        if (set.contains(clientReqParam.getRecipientId()))return;
-        //查询是否存在
-        SmallTalkRecordDO smallTalkRecordDO = querySmallTalkRecord(clientReqParam.getRecipientId());
-
-        if (null == smallTalkRecordDO) return;
-        //判断联系列表是否存在消息接收方
-        for (SmallTalkRecord bean : smallTalkRecordDO.getRecipientIds())
-            if(clientReqParam.getOriginatorId().equals(bean.getRecipientId())){
-                set.add(clientReqParam.getOriginatorId());
-                return;
-            }
-
-        set.add(clientReqParam.getRecipientId());
-
-        saveRelationshipRecord(clientReqParam.getRecipientId(),clientReqParam.getOriginatorId());
-
+        WebApplicationContext.sendEvent(new ContactDto(set,clientReqParam,contact));
     }
-
-    /**
-     * 保存联系列表及最新联系时间
-     */
-    private void saveRelationshipRecord(String originatorId,String recipientId){
-        //不存在新增
-        if (contact.containsKey(recipientId))
-            TempUtils.getTemple().upsert(Query.query(Criteria.where("originatorId").is(originatorId).and("recipientIds.recipientId").is(recipientId)),
-                    new Update().set("recipientIds.$.timestamp",NumUtil.getTime()),
-                    SmallTalkRecordDO.class);
-        else
-            TempUtils.getTemple().upsert(Query.query(Criteria.where("originatorId").is(originatorId)),
-                    new Update().addToSet("recipientIds",new SmallTalkRecord(0,recipientId,NumUtil.getTime())),
-                    SmallTalkRecordDO.class);
-    }
-
-    /**
-     * 设置已读行数
-     */
-//    private void seReadline(SmallTalkRecordDO smallTalkRecordDO){
-//        if (null==smallTalkRecordDO||null==smallTalkRecordDO.getRecipientIds()) return ;
-//        //获取每个联系人的聊天行数 更新数据库
-//        smallTalkRecordDO.getRecipientIds().forEach(bean->{
-//            String codeId = NumUtil.countCode(bean.getRecipientId().hashCode(), originatorId.hashCode());
-//            //聊天记录
-//            SmallTalkMessageDO smallTalkMessage = TempUtils.getTemple().findOne(Query.query(Criteria.where("codeId").is(codeId)), SmallTalkMessageDO.class);
-//            //如果存在 更新行数
-//            if (null!=smallTalkMessage){
-//                TempUtils.getTemple().upsert(Query.query(Criteria.where("originatorId").is(originatorId).and("recipientIds.recipientId").is(bean.getRecipientId())),
-//                        new Update().set("recipientIds.$.timestamp",NumUtil.getTime()).set("recipientIds.$.readLine",smallTalkMessage.getMessage().size()),
-//                        SmallTalkRecordDO.class);
-//            }
-//        });
-//    }
 
     /**
      * 保存消息记录
      */
     private void saveChatRecords(ClientReqParam clientReqParam){
-        //todo
-        String codeId = NumUtil.countCode(clientReqParam.getRecipientId().hashCode(), originatorId.hashCode());
-
-        //生成唯一id
-        String uuid = UUID.randomUUID().toString().replaceAll("-","");
-
-        //记录存在
-        if (contact.containsKey(clientReqParam.getRecipientId()))
-        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId)),
-                new Update().addToSet("message",new TalkMessage(uuid,clientReqParam.getOriginatorId(),
-                        clientReqParam.getRecipientId(),
-                        clientReqParam.getMessage(),
-                        NumUtil.getTime())),SmallTalkMessageDO.class);
-         else {
-            //不存在
-            List<TalkMessage> messageArrayList = new ArrayList<>();
-            messageArrayList.add(new TalkMessage(uuid,clientReqParam.getOriginatorId(),
-                    clientReqParam.getRecipientId(),
-                    clientReqParam.getMessage(),
-                    NumUtil.getTime()));
-            TempUtils.getTemple().save(new SmallTalkMessageDO(codeId,messageArrayList));
-        }
-         //保存到es中
-         saveChatRecordsToEs(clientReqParam,uuid);
+        WebApplicationContext.sendEvent(new SmallTalkMessageDto(set,clientReqParam,contact));
     }
-
-    /**
-     * 将聊天信息保存到es中
-     * @param clientReqParam es
-     * @param uuid 唯一id
-     */
-    private void saveChatRecordsToEs(ClientReqParam clientReqParam, String uuid) {
-        EsUtil.getChatRepository().save(new DocumentMsg(uuid,clientReqParam.getMessage()));
-    }
-
-    /**
-     * 修改消息状态
-     */
-//    private void editChatRecords(ClientReqParam clientReqParam){
-//        String codeId = NumUtil.countCode(clientReqParam.getRecipientId().hashCode(), originatorId.hashCode());
-//        TempUtils.getTemple().upsert(Query.query(Criteria.where("codeId").is(codeId).and("message.type").is("0")),new Update().set("message.1.type","1")
-//                ,SmallTalkMessageDO.class);
-//    }
 
     //批量发送
     private void sendMessageAll(String message){

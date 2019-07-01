@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class SocketHandler implements InvocationHandler {
 
-    private Object object;
+    private Object object = new Object();
 
     private Address addr;
 

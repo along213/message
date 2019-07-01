@@ -24,7 +24,6 @@ public class SensitiveWordInit {
 
 	/**
 	 * @author chenming
-	 * @date 2014年4月20日 下午2:28:32
 	 * @version 1.0
 	 */
 	@SuppressWarnings("rawtypes")
@@ -40,37 +39,7 @@ public class SensitiveWordInit {
 		}
 		return sensitiveWordMap;
 	}
-
 	/**
-	 * 读取敏感词库，将敏感词放入HashSet中，构建一个DFA算法模型：<br>
-	 * 中 = {
-	 *      isEnd = 0
-	 *      国 = {<br>
-	 *      	 isEnd = 1
-	 *           人 = {isEnd = 0
-	 *                民 = {isEnd = 1}
-	 *                }
-	 *           男  = {
-	 *           	   isEnd = 0
-	 *           		人 = {
-	 *           			 isEnd = 1
-	 *           			}
-	 *           	}
-	 *           }
-	 *      }
-	 *  五 = {
-	 *      isEnd = 0
-	 *      星 = {
-	 *      	isEnd = 0
-	 *      	红 = {
-	 *              isEnd = 0
-	 *              旗 = {
-	 *                   isEnd = 1
-	 *                  }
-	 *              }
-	 *      	}
-	 *      }
-	 * @author chenming
 	 * @param keyWordSet  敏感词库
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
