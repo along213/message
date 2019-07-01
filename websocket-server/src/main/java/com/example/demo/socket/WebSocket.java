@@ -9,6 +9,7 @@ import com.example.demo.Repository.ChatRepository;
 import com.example.demo.cache.SmallTalkClients;
 import com.example.demo.common.WebApplicationContext;
 import com.example.demo.dfa.SensitiveWordFilter;
+import com.example.demo.dfa.SensitiveWordFilterUtil;
 import com.example.demo.service.ServiceFacade;
 import com.example.demo.util.EsUtil;
 import com.example.demo.util.NumUtil;
@@ -223,8 +224,7 @@ public class WebSocket {
     private void replaceSensitiveWord(ClientReqParam clientReqParam){
         String message = clientReqParam.getMessage();
         if (StringUtils.isEmpty(message))return;
-        clientReqParam.setMessage(
-                SensitiveWordFilter.replaceSensitiveWord(message, SensitiveWordFilter.MIN_MATCH_TYPE, "*"));
+        clientReqParam.setMessage(SensitiveWordFilterUtil.filter(message));
     }
 
     /**

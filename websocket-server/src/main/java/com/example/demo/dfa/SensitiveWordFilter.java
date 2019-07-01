@@ -29,7 +29,7 @@ public class SensitiveWordFilter {
 	 * @return 若包含返回true，否则返回false
 	 * @version 1.0
 	 */
-	public static boolean isContainSensitiveWord(String txt,int matchType){
+	public boolean isContainSensitiveWord(String txt,int matchType){
 		boolean flag = false;
 		for(int i = 0 ; i < txt.length() ; i++){
 			int matchFlag = CheckSensitiveWord(txt, i, matchType); //判断是否包含敏感字符
@@ -49,7 +49,7 @@ public class SensitiveWordFilter {
 	 * @return
 	 * @version 1.0
 	 */
-	public static Set<String> getSensitiveWord(String txt , int matchType){
+	public Set<String> getSensitiveWord(String txt , int matchType){
 		Set<String> sensitiveWordList = new HashSet<String>();
 
 		for(int i = 0 ; i < txt.length() ; i++){
@@ -72,7 +72,7 @@ public class SensitiveWordFilter {
 	 * @param replaceChar 替换字符，默认*
 	 * @version 1.0
 	 */
-	public static String replaceSensitiveWord(String txt,int matchType,String replaceChar){
+	public String replaceSensitiveWord(String txt,int matchType,String replaceChar){
 		String resultTxt = txt;
 		Set<String> set = getSensitiveWord(txt, matchType);     //获取所有的敏感词
 		Iterator<String> iterator = set.iterator();
@@ -96,7 +96,7 @@ public class SensitiveWordFilter {
 	 * @return
 	 * @version 1.0
 	 */
-	private static String getReplaceChars(String replaceChar,int length){
+	private String getReplaceChars(String replaceChar,int length){
 		String resultReplace = replaceChar;
 		for(int i = 1 ; i < length ; i++){
 			resultReplace += replaceChar;
@@ -116,7 +116,7 @@ public class SensitiveWordFilter {
 	 * @version 1.0
 	 */
 	@SuppressWarnings({ "rawtypes"})
-	public static int CheckSensitiveWord(String txt,int beginIndex,int matchType){
+	public int CheckSensitiveWord(String txt,int beginIndex,int matchType){
 		boolean  flag = false;    //敏感词结束标识位：用于敏感词只有1位的情况
 		int matchFlag = 0;     //匹配标识数默认为0
 		char word = 0;
