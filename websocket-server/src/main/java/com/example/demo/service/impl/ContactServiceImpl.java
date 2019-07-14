@@ -36,7 +36,7 @@ public class ContactServiceImpl implements IContactService {
         //判断联系列表是否存在消息接收方
         for (SmallTalkRecord bean : smallTalkRecordDO.getRecipientIds())
             if(clientReqParam.getOriginatorId().equals(bean.getRecipientId())){
-                set.add(clientReqParam.getOriginatorId());
+                set.add(clientReqParam.getRecipientId());
                 return;
             }
 
