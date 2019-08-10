@@ -1,4 +1,4 @@
-package com.example.demo.Repository;
+package com.example.demo.small_talk.Repository;
 
 import com.example.demo.Bean.DO.DocumentMsg;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

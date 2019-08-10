@@ -1,6 +1,6 @@
 package com.example.demo.util;
 
-import com.example.demo.Repository.ChatRepository;
+import com.example.demo.small_talk.Repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

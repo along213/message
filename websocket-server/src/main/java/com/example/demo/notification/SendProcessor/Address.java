@@ -1,4 +1,4 @@
-package com.example.demo.SendProcessor;
+package com.example.demo.notification.SendProcessor;
 
 public class Address {
 

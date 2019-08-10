@@ -1,7 +1,7 @@
-package com.example.demo.SendProcessor.proxy;
+package com.example.demo.notification.SendProcessor.proxy;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.SendProcessor.Address;
+import com.example.demo.notification.SendProcessor.Address;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;

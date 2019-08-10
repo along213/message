@@ -1,4 +1,4 @@
-package com.example.demo.SendProcessor;
+package com.example.demo.notification.SendProcessor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

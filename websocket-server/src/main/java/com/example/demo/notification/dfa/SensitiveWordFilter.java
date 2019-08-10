@@ -1,4 +1,4 @@
-package com.example.demo.dfa;
+package com.example.demo.notification.dfa;
 
 import java.util.HashSet;
 import java.util.Iterator;

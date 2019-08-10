@@ -2,7 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.Bean.DO.DocumentMsg;
 import com.example.demo.Bean.DO.SmallTalkRecordDO;
-import com.example.demo.Repository.ChatRepository;
+import com.example.demo.small_talk.Repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

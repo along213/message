@@ -1,11 +1,10 @@
-package com.example.demo.SendProcessor;
+package com.example.demo.notification.SendProcessor;
 
-import com.example.demo.SendProcessor.proxy.SocketHandler;
+import com.example.demo.notification.SendProcessor.proxy.SocketHandler;
 import com.example.demo.service.SendService;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+
 import java.lang.reflect.Proxy;
 
 //@Configuration

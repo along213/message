@@ -3,7 +3,6 @@ package com.example.demo.config;
 import com.google.common.net.InetAddresses;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,7 @@ public class ElasticSearchConfig {
                 .put("cluster.name", "elasticsearch").put("client.transport.sniff", false).build();
         @SuppressWarnings("resource")
         TransportClient client = new PreBuiltTransportClient(settings)
-                .addTransportAddress(new InetSocketTransportAddress(InetAddresses.forString(ip), 9300));
+                .addTransportAddress(new TransportAddress(InetAddresses.forString(ip), 9300));
         return client;
     }
 

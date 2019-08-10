@@ -5,13 +5,11 @@ import com.example.demo.Bean.ClientReqParam;
 import com.example.demo.Bean.ContactDto;
 import com.example.demo.Bean.DO.*;
 import com.example.demo.Bean.SmallTalkMessageDto;
-import com.example.demo.Repository.ChatRepository;
 import com.example.demo.cache.SmallTalkClients;
 import com.example.demo.common.WebApplicationContext;
-import com.example.demo.dfa.SensitiveWordFilter;
-import com.example.demo.dfa.SensitiveWordFilterUtil;
+import com.example.demo.notification.dfa.SensitiveWordFilter;
+import com.example.demo.notification.dfa.SensitiveWordFilterUtil;
 import com.example.demo.service.ServiceFacade;
-import com.example.demo.util.EsUtil;
 import com.example.demo.util.NumUtil;
 import com.example.demo.util.TempUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -189,6 +187,7 @@ public class WebSocket {
         try {
             log.info("来自客户端消息：" + message+"客户端的id是："+session.getId());
             ClientReqParam clientReqParam = JSON.parseObject(message, ClientReqParam.class);
+
             //保存联系记录
             saveRelationshipRecord(clientReqParam);
             //messageType 1代表上线 2代表下线 3代表在线名单  4代表普通消息
@@ -201,6 +200,7 @@ public class WebSocket {
             //消息过滤
             replaceSensitiveWord(clientReqParam);
 
+            clientReqParam.setSendTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             //发送给自己
             sendMessageToMe(clientReqParam);
 

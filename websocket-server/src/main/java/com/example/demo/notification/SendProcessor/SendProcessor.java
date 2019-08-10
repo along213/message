@@ -1,6 +1,6 @@
-package com.example.demo.SendProcessor;
+package com.example.demo.notification.SendProcessor;
 
-import com.example.demo.SendProcessor.proxy.SocketHandler;
+import com.example.demo.notification.SendProcessor.proxy.SocketHandler;
 import com.example.demo.service.SocketService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;

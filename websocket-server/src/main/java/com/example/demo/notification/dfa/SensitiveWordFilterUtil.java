@@ -1,4 +1,4 @@
-package com.example.demo.dfa;
+package com.example.demo.notification.dfa;
 
 public class SensitiveWordFilterUtil {
 

@@ -16,6 +16,19 @@ spring:
 ip: 192.168.10.200
 
 
+thrift:
+  port: 8085
+  selectorThreads: 5
+  workerThreads: 5
+  register:
+    registerName: mis-message
+
+zookeeper:
+  connectString: ${ip}:2181,${ip}:2182,${ip}:2183
+  sessionTimeout: 1000
+
 
 websocket:
   url: http://192.168.10.33:8080
+server:
+  port: 8081
